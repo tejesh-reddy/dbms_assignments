@@ -1,0 +1,76 @@
+1.
+SELECT title from film f
+  INNER JOIN film_category fc
+  ON fc.film_id = f.film_id
+    INNER JOIN category cat
+    ON cat.category_id = fc.category_id
+WHERE cat.category = 'comedy' AND f.rating = 'PG-13';
+
+2.
+SELECT count(*) rental_count, f.title
+FROM rental r 
+  INNER JOIN inventory i 
+  ON i.inventory_id = r.inventory_id 
+    INNER JOIN film f 
+    ON i.film_id = f.film_id 
+      INNER JOIN film_category fc 
+      ON fc.film_id = f.film_id 
+        INNER JOIN category ct 
+        ON ct.category_id = fc.category_id 
+WHERE ct.name = 'horror' 
+GROUP BY f.title 
+ORDER BY 1 DESC 
+LIMIT 3;
+
+3.
+SELECT CONCAT(c.first_name, ' ', c.last_name) customer_name
+FROM rental r 
+  INNER JOIN inventory i 
+  ON i.inventory_id = r.inventory_id 
+    INNER JOIN film f 
+    ON i.film_id = f.film_id 
+      INNER JOIN film_category fc 
+      ON fc.film_id = f.film_id 
+        INNER JOIN category ct 
+        ON ct.category_id = fc.category_id 
+          INNER JOIN customer c
+          ON c.customer_id = r.customer_id
+WHERE ct.name = 'sports' AND 
+c.address_id IN
+  (SELECT a.address_id from address a
+    INNER JOIN city c
+    ON c.city_id = a.city_id
+    AND c.country_id IN 
+      (SELECT country_id FROM country cnty
+      WHERE cnty.country_id = c.country_id AND cnty.country = 'India'));
+
+4.
+SELECT CONCAT(cust.first_name, ' ', cust.last_name) customer_name
+FROM customer cust
+  INNER JOIN rental r
+  ON r.customer_id = cust.customer_id
+    INNER JOIN inventory i
+    ON r.inventory_id = i.inventory_id
+      INNER JOIN film f
+      ON f.film_id = i.film_id
+        INNER JOIN film_actor fa
+        ON fa.film_id = f.film_id
+          INNER JOIN actor ac 
+          ON ac.actor_id = fa.actor_id
+WHERE ac.first_name = 'NICK' AND ac.last_name = 'WAHLBERG' AND
+cust.address_id IN
+  (SELECT a.address_id from address a
+    INNER JOIN city c
+    ON c.city_id = a.city_id
+    AND c.country_id IN 
+      (SELECT country_id FROM country cnty
+      WHERE cnty.country_id = c.country_id AND cnty.country = 'Canada'));
+
+5.
+SELECT count(*) sean_williams_film_count
+FROM film f
+  INNER JOIN film_actor fa
+  ON fa.film_id = f.film_id
+    INNER JOIN actor ac
+    ON ac.actor_id = fa.actor_id
+WHERE ac.first_name = 'SEAN' AND ac.last_name = 'WILLIAMS';
