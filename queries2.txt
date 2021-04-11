@@ -1,0 +1,56 @@
+1. 
+SELECT f.title FROM film f
+  INNER JOIN film_category fc
+  ON fc.film_id = f.film_id
+    INNER JOIN category cat
+    ON cat.category_id = fc.category_id
+WHERE cat.name = 'Documentary'
+AND f.special_features = 'Deleted Scenes';
+
+2.
+SELECT count(*) jon_rental_count
+FROM staff_list st
+  INNER JOIN rental r
+  ON r.staff_id = st.ID
+  AND st.name = 'Jon Stephens'
+WHERE r.inventory_id IN
+  (SELECT i.inventory_id
+  FROM inventory i
+    INNER JOIN film_category fc
+    ON fc.film_id = i.film_id
+      INNER JOIN category cat
+      ON cat.category_id = fc.category_id
+  WHERE cat.name = 'Sci-Fi');
+
+3.
+SELECT total_sales animation_sales
+FROM sales_by_film_category 
+WHERE category = 'Animation';
+
+4.
+SELECT count(*) patricia_category_count, ct.name
+FROM rental r 
+  INNER JOIN inventory i
+  ON i.inventory_id = r.inventory_id 
+    INNER JOIN film_category fc 
+    ON fc.film_id = i.film_id 
+      INNER JOIN category ct 
+      ON ct.category_id = fc.category_id 
+WHERE r.customer_id = (SELECT cust.customer_id
+  FROM customer cust
+  WHERE cust.first_name = 'PATRICIA' AND cust.last_name = 'JOHNSON') 
+GROUP BY ct.name
+ORDER BY 1 DESC 
+LIMIT 3;
+
+5.
+SELECT count(*) susan_r_rated_count
+FROM rental r 
+  INNER JOIN inventory i
+  ON i.inventory_id = r.inventory_id 
+    INNER JOIN film f 
+    ON f.film_id = i.film_id 
+WHERE f.rating = 'R' AND
+r.customer_id = (SELECT cust.customer_id
+  FROM customer cust
+  WHERE cust.first_name = 'SUSAN' AND cust.last_name = 'WILSON');
